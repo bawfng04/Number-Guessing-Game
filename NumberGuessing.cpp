@@ -2,13 +2,10 @@
 using namespace std;
 
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
-// what to add:
-// hint
-// limit the number of attempts
 
 // forward declaration
 void guessing();
-
+// helper functions
 void printBox(string content)
 {
     stringstream ss(content);
@@ -45,14 +42,13 @@ void printInstructions()
     string gameModeInstructions = "Please select mode:\n"
                                   "Type 'easy' for easy mode, guess the number between 1 and 100, unlimited attempts and 0 hint\n"
                                   "Type 'medium' for medium mode, guess the number between 1 and 200, 10 attempts and 1 hint\n"
-                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 20 attemps and 2 hints";
-
+                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 10 attemps and 2 hints";
     printBox(gameModeInstructions);
     cout << endl
          << endl;
 }
 
-void handleInvalidInput(int &guess, int &attempts)
+void checkInvalidInput(int &guess, int &attempts)
 {
     while (!(cin >> guess))
     {
@@ -67,6 +63,38 @@ void handleInvalidInput(int &guess, int &attempts)
     }
 }
 
+void handleLargerGuess(int remain)
+{
+    string messenge = "Guess a lower number! Try again... \n";
+    if (remain <= 5 && remain != 1)
+    {
+        messenge += "You have " + to_string(remain) + " attempts left\n";
+    }
+    else if (remain == 1)
+        messenge += "Last guess\n";
+    printBox(messenge);
+}
+
+void handleSmallerGuess(int remain)
+{
+    string messenge = "Guess a higher number! Try again... \n";
+    if (remain <= 5 && remain != 1)
+    {
+        messenge += "You have " + to_string(remain) + " attempts left\n";
+    }
+    else if (remain == 1)
+        messenge += "Last guess\n";
+    printBox(messenge);
+}
+
+void handleCorrectGuess(int attempts, int randomNumber)
+{
+    if (attempts != 1)
+        printBox("Congratulations! You guessed the number with " + to_string(attempts) + " attempts. The correct number was " + to_string(randomNumber));
+    else
+        printBox("Congratulations! You guessed the number with 1 attempt. The correct number was " + to_string(randomNumber));
+}
+
 bool outOfLimit(int attempts, int limit, int randomNumber)
 {
     if (attempts == limit)
@@ -75,6 +103,15 @@ bool outOfLimit(int attempts, int limit, int randomNumber)
         return true;
     }
     return false;
+}
+
+void startNewLoop(int &attempts, int maxNumber)
+{
+    attempts++;
+    cout << endl
+         << "Attempt " << attempts << ", "
+                                      "guess the number between 1 and "
+         << maxNumber << endl;
 }
 
 void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
@@ -91,14 +128,14 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
     else if (mode == "medium")
     {
         randomNumber = rand() % 200 + 1;
-        limit = 8;
+        limit = 10;
         hint = 1;
         maxNumber = 200;
     }
     else if (mode == "hard")
     {
         randomNumber = rand() % 500 + 1;
-        limit = 12;
+        limit = 10;
         hint = 2;
         maxNumber = 500;
     }
@@ -112,62 +149,25 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
 void guessing()
 {
     srand(time(0));
-    int randomNumber;
-    int guess;
-    int attempts = 0;
-    int limit;
-    int hint;
-    int maxNumber;
-
-    // in hướng dẫn
+    int randomNumber, guess, limit, hint, maxNumber, attempts = 0;
     printInstructions();
-
-    // chọn mode
     selectMode(randomNumber, limit, hint, maxNumber);
-
     do
     {
         if (outOfLimit(attempts, limit, randomNumber))
             return;
 
-        attempts++;
-        int remain = limit - attempts;
-        cout << endl
-             << "Attempt " << attempts << ", "
-                                          "guess the number between 1 and "
-             << maxNumber << endl;
+        startNewLoop(attempts, maxNumber);
 
-        handleInvalidInput(guess, attempts);
+        checkInvalidInput(guess, attempts);
 
         if (guess > randomNumber)
-        {
-            string messenge = "Guess a lower number! Try again... \n";
-            if (remain <= 5 && remain != 1)
-            {
-                messenge += "You have " + to_string(remain) + " attempts left\n";
-            }
-            else if (remain == 1)
-                messenge += "Last guess\n";
-            printBox(messenge);
-        }
+            handleLargerGuess(limit - attempts);
         else if (guess < randomNumber)
-        {
-            string messenge = "Guess a higher number! Try again... \n";
-            if (remain <= 5 && remain != 1)
-            {
-                messenge += "You have " + to_string(remain) + " attempts left\n";
-            }
-            else if (remain == 1)
-                messenge += "Last guess\n";
-            printBox(messenge);
-        }
+            handleSmallerGuess(limit - attempts);
         else
-        {
-            if (attempts != 1)
-                printBox("Congratulations! You guessed the number with " + to_string(attempts) + " attempts. The correct number was " + to_string(randomNumber));
-            else
-                printBox("Congratulations! You guessed the number with 1 attempt. The correct number was " + to_string(randomNumber));
-        }
+            handleCorrectGuess(attempts, randomNumber);
+
     } while (guess != randomNumber);
     return;
 }
