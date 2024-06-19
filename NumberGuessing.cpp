@@ -2,6 +2,7 @@
 using namespace std;
 
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
+// need to handle the second hint bug
 
 // forward declaration
 void guessing();
@@ -12,7 +13,7 @@ void printBox(string content)
     string line;
     int maxLength = 0;
 
-    // Tìm chiều dài lớn nhất
+    // find the longest line
     while (getline(ss, line, '\n'))
     {
         if (line.length() > maxLength)
@@ -35,14 +36,16 @@ void printBox(string content)
     }
 
     cout << horizontalLine << endl;
+    cout << endl
+         << endl;
 }
 
 void printInstructions()
 {
     string gameModeInstructions = "Please select mode:\n"
                                   "Type 'easy' for easy mode, guess the number between 1 and 100, unlimited attempts and 0 hint\n"
-                                  "Type 'medium' for medium mode, guess the number between 1 and 200, 10 attempts and 1 hint\n"
-                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 9 attemps and 2 hints";
+                                  "Type 'medium' for medium mode, guess the number between 1 and 200, 10 attempts and 2 hint\n"
+                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 9 attemps and 3 hints";
     printBox(gameModeInstructions);
     cout << endl
          << endl;
@@ -110,7 +113,6 @@ bool outOfLimit(int attempts, int limit, int randomNumber)
 
 void startNewLoop(int &attempts, int maxNumber, int hint)
 {
-    attempts++;
     cout << endl
          << "Attempt " << attempts << ", "
                                       "guess the number between 1 and "
@@ -134,14 +136,14 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
     {
         randomNumber = rand() % 200 + 1;
         limit = 10;
-        hint = 1;
+        hint = 2;
         maxNumber = 200;
     }
     else if (mode == "hard")
     {
         randomNumber = rand() % 500 + 1;
         limit = 9;
-        hint = 2;
+        hint = 3;
         maxNumber = 500;
     }
     else
@@ -174,6 +176,17 @@ bool isEven(int n)
     return n % 2 == 0;
 }
 
+int sumOfDigits(int n)
+{
+    int sum = 0;
+    while (n > 0)
+    {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
 void guessing()
 {
     srand(time(0));
@@ -195,20 +208,27 @@ void guessing()
             if (hint == 0)
             {
                 printBox("You have no hint left");
-                continue;
             }
-            hint--;
-            if (isPrime(randomNumber))
+            else if (hint == 1)
             {
-                printBox("The number is a prime number");
+                hint--;
+                printBox("The sum of the digits of the number is " + to_string(sumOfDigits(randomNumber)));
             }
-            else if (isEven(lastDigit(randomNumber)))
+            else if (hint == 2)
             {
-                printBox("The number is end with an even number");
+                hint--;
+                if (isEven(lastDigit(randomNumber)))
+                    printBox("The number is end with an even number");
+                else
+                    printBox("The number is end with an odd number");
             }
-            else
+            else if (hint == 3)
             {
-                printBox("The number is end with an odd number");
+                hint--;
+                if (isPrime(randomNumber))
+                    printBox("The number is a prime number");
+                else
+                    printBox("The number is not a prime number");
             }
             continue;
         }
@@ -216,6 +236,7 @@ void guessing()
         {
             stringstream ss(input);
             ss >> guess;
+            // check if the input is an integer
             if (ss.fail() || !ss.eof())
             {
                 printBox("Invalid input. Please enter an integer.");
@@ -230,8 +251,11 @@ void guessing()
                     cout << "Or type 'hint' for a hint" << endl;
                 continue;
             }
+            else
+            {
+                attempts++;
+            }
         }
-
         if (guess > randomNumber)
             handleLargerGuess(limit - attempts);
         else if (guess < randomNumber)
