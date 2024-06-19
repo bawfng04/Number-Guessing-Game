@@ -33,8 +33,11 @@ No issues found as of now.
 
 Contributions are welcome! Please feel free to submit a pull request.
 
-## Screenshot
+## Screenshots
+
+![modeSelector](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/63ddaaf6-8a37-49ab-9c41-50e1ec5ea6fc)
 
 ![screenshot](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/d8485de9-cffe-41bb-b0c0-df3780d872a9)
 
+![ifFail](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/a1b4272d-c853-4277-a30c-b9c202858b7a)
 
