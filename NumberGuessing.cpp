@@ -42,13 +42,13 @@ void printInstructions()
     string gameModeInstructions = "Please select mode:\n"
                                   "Type 'easy' for easy mode, guess the number between 1 and 100, unlimited attempts and 0 hint\n"
                                   "Type 'medium' for medium mode, guess the number between 1 and 200, 10 attempts and 1 hint\n"
-                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 10 attemps and 2 hints";
+                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 9 attemps and 2 hints";
     printBox(gameModeInstructions);
     cout << endl
          << endl;
 }
 
-void checkInvalidInput(int &guess, int &attempts)
+void checkInvalidInput(int &guess, int &attempts, int maxNumber, int hint)
 {
     while (!(cin >> guess))
     {
@@ -59,7 +59,10 @@ void checkInvalidInput(int &guess, int &attempts)
         attempts++;
         cout << endl
              << "Attempt " << attempts << ", "
-                                          "guess the number between 1 and 100: ";
+                                          "guess the number between 1 and "
+             << maxNumber << endl;
+        if (hint > 0)
+            cout << "Or type 'hint' for a hint" << endl;
     }
 }
 
@@ -105,13 +108,15 @@ bool outOfLimit(int attempts, int limit, int randomNumber)
     return false;
 }
 
-void startNewLoop(int &attempts, int maxNumber)
+void startNewLoop(int &attempts, int maxNumber, int hint)
 {
     attempts++;
     cout << endl
          << "Attempt " << attempts << ", "
                                       "guess the number between 1 and "
          << maxNumber << endl;
+    if (hint > 0)
+        cout << "Or type 'hint' for a hint" << endl;
 }
 
 void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
@@ -135,7 +140,7 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
     else if (mode == "hard")
     {
         randomNumber = rand() % 500 + 1;
-        limit = 10;
+        limit = 9;
         hint = 2;
         maxNumber = 500;
     }
@@ -144,6 +149,29 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
         cout << "Invalid mode. Please try again." << endl;
         guessing();
     }
+}
+
+// hints
+int lastDigit(int n)
+{
+    return n % 10;
+}
+
+bool isPrime(int n)
+{
+    if (n < 2)
+        return false;
+    for (int i = 2; i <= sqrt(n); i++)
+    {
+        if (n % i == 0)
+            return false;
+    }
+    return true;
+}
+
+bool isEven(int n)
+{
+    return n % 2 == 0;
 }
 
 void guessing()
@@ -157,9 +185,52 @@ void guessing()
         if (outOfLimit(attempts, limit, randomNumber))
             return;
 
-        startNewLoop(attempts, maxNumber);
+        startNewLoop(attempts, maxNumber, hint);
 
-        checkInvalidInput(guess, attempts);
+        // checkInvalidInput(guess, attempts);
+        string input;
+        cin >> input;
+        if (input == "hint")
+        {
+            if (hint == 0)
+            {
+                printBox("You have no hint left");
+                continue;
+            }
+            hint--;
+            if (isPrime(randomNumber))
+            {
+                printBox("The number is a prime number");
+            }
+            else if (isEven(lastDigit(randomNumber)))
+            {
+                printBox("The number is end with an even number");
+            }
+            else
+            {
+                printBox("The number is end with an odd number");
+            }
+            continue;
+        }
+        else
+        {
+            stringstream ss(input);
+            ss >> guess;
+            if (ss.fail() || !ss.eof())
+            {
+                printBox("Invalid input. Please enter an integer.");
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                attempts++;
+                cout << endl
+                     << "Attempt " << attempts << ", "
+                                                  "guess the number between 1 and "
+                     << maxNumber << endl;
+                if (hint > 0)
+                    cout << "Or type 'hint' for a hint" << endl;
+                continue;
+            }
+        }
 
         if (guess > randomNumber)
             handleLargerGuess(limit - attempts);
