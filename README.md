@@ -1,19 +1,26 @@
-```markdown
 # Number Guessing Game
 
-This is a simple number guessing game implemented in C++. The game generates a random number between 1 and 100, and the player's goal is to guess this number.
+This is a simple number guessing game implemented in C++. The game offers three modes: easy, medium, and hard. 
 
 ## How to Play
 
-1. Run the game. You will be prompted to guess a number between 1 and 100.
-2. Enter your guess. If your guess is too high or too low, the game will tell you so. You can then enter a new guess.
-3. This process repeats until you guess the correct number. The game will then display a congratulatory message and tell you how many attempts it took you to guess the number.
+1. Compile and run the game.
+2. Select a game mode by typing 'easy', 'medium', or 'hard'.
+3. Guess the number.
 
-## Building and Running the Game
+## Game Modes
 
-This game is a single C++ file and can be built and run with any C++ compiler. For example, if you're using g++, you can build and run the game with the following command:
+- **Easy Mode**: Guess a number between 1 and 100. There is no limit on the number of attempts and no hints are provided.
+- **Medium Mode**: Guess a number between 1 and 200. You have 10 attempts and 1 hint.
+- **Hard Mode**: Guess a number between 1 and 500. You have 9 attempts and 2 hints.
 
+## Hints
 
-g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
-```
+Hints can be requested by typing 'hint'. The hints can be about whether the number is prime, or whether the last digit of the number is even or odd.
 
+## Compilation
+
+To compile the game, navigate to the project directory and run the following command:
+
+```bash
+g++ NumberGuessing.cpp -o NumberGuessing
