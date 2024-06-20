@@ -2,7 +2,6 @@
 using namespace std;
 
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
-// need to handle the second hint bug
 
 // forward declaration
 void guessing();
@@ -124,6 +123,7 @@ void startNewLoop(int &attempts, int maxNumber, int hint)
 void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
 {
     string mode;
+    cout << "Select mode: ";
     cin >> mode;
     if (mode == "easy")
     {
@@ -187,12 +187,99 @@ int sumOfDigits(int n)
     return sum;
 }
 
+bool isPerfectNumber(int n)
+{
+    int sum = 0;
+    for (int i = 1; i < n; i++)
+    {
+        if (n % i == 0)
+            sum += i;
+    }
+    return sum == n;
+}
+
+bool isDevidedBy(int n, int m)
+{
+    return n % m == 0;
+}
+
+bool isPowerOfTwo(int n)
+{
+    return n && (!(n & (n - 1)));
+}
+
+bool isAmstrongNumber(int n)
+{
+    int sum = 0;
+    int temp = n;
+    while (temp > 0)
+    {
+        int lastDigit = temp % 10;
+        sum += pow(lastDigit, 3);
+        temp /= 10;
+    }
+    return sum == n;
+}
+
+void getHints(vector<pair<string, bool>> &v)
+{
+    int randomIndex = rand() % v.size();
+    while (v[randomIndex].second)
+        randomIndex = rand() % v.size();
+    v[randomIndex].second = true;
+    printBox(v[randomIndex].first);
+}
+
+void generateHints(vector<pair<string, bool>> &v, int randomNumber)
+{
+    // prime
+    if (isPrime(randomNumber))
+        v.push_back(make_pair("The number is a prime number", false));
+    else
+        v.push_back(make_pair("The number is not a prime number", false));
+    // even, odd
+    if (isEven(lastDigit(randomNumber)))
+        v.push_back(make_pair("The number is end with an even number", false));
+    else
+        v.push_back(make_pair("The number is end with an odd number", false));
+    // sum
+    v.push_back(make_pair("The sum of the digits of the number is " + to_string(sumOfDigits(randomNumber)), false));
+    // perfect number
+    if (isPerfectNumber(randomNumber))
+        v.push_back(make_pair("The number is a perfect number", false));
+    else
+        v.push_back(make_pair("The number is not a perfect number", false));
+    // devided by 3
+    if (isDevidedBy(randomNumber, 3))
+        v.push_back(make_pair("The number is devided by 3", false));
+    else
+        v.push_back(make_pair("The number is not devided by 3", false));
+    // devided by 7
+    if (isDevidedBy(randomNumber, 7))
+        v.push_back(make_pair("The number is devided by 7", false));
+    else
+        v.push_back(make_pair("The number is not devided by 7", false));
+    // power of 2
+    if (isPowerOfTwo(randomNumber))
+        v.push_back(make_pair("The number is a power of 2", false));
+    else
+        v.push_back(make_pair("The number is not a power of 2", false));
+    // amstrong number
+    if (isAmstrongNumber(randomNumber))
+        v.push_back(make_pair("The number is an amstrong number", false));
+    else
+        v.push_back(make_pair("The number is not an amstrong number", false));
+}
+
 void guessing()
 {
     srand(time(0));
     int randomNumber, guess, limit, hint, maxNumber, attempts = 0;
+    vector<pair<string, bool>> hints;
     printInstructions();
     selectMode(randomNumber, limit, hint, maxNumber);
+    generateHints(hints, randomNumber);
+
     do
     {
         if (outOfLimit(attempts, limit, randomNumber))
@@ -202,6 +289,7 @@ void guessing()
 
         // checkInvalidInput(guess, attempts);
         string input;
+        cout << "   >>  ";
         cin >> input;
         if (input == "hint")
         {
@@ -209,26 +297,10 @@ void guessing()
             {
                 printBox("You have no hint left");
             }
-            else if (hint == 1)
+            else
             {
+                getHints(hints);
                 hint--;
-                printBox("The sum of the digits of the number is " + to_string(sumOfDigits(randomNumber)));
-            }
-            else if (hint == 2)
-            {
-                hint--;
-                if (isEven(lastDigit(randomNumber)))
-                    printBox("The number is end with an even number");
-                else
-                    printBox("The number is end with an odd number");
-            }
-            else if (hint == 3)
-            {
-                hint--;
-                if (isPrime(randomNumber))
-                    printBox("The number is a prime number");
-                else
-                    printBox("The number is not a prime number");
             }
             continue;
         }
