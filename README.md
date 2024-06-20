@@ -1,43 +1,38 @@
 # Number Guessing Game
 
-This is a simple number guessing game implemented in C++. The game offers three modes of play: easy, medium, and hard. 
+## Description
+This is a simple number guessing game. The game generates a random number and the player's goal is to guess that number. The game offers different difficulty levels and the score is calculated based on the number of attempts and the chosen difficulty level.
 
 ## How to Play
+1. Run the game.
+2. Choose your difficulty level: easy, medium, hard, or extreme.
+3. The game will generate a random number within a range depending on the chosen difficulty level.
+4. Start guessing the number. After each guess, the game will tell you if your guess is too high, too low, or correct.
+5. The game ends when you guess the correct number or you've reached the maximum number of attempts. Your score will be calculated based on the number of attempts you've made.
 
-1. Run the game. You will be prompted to select a mode.
-2. Type 'easy', 'medium', or 'hard' to select a mode.
-3. After selecting a mode, you will be asked to guess a number within a certain range. The range and the number of attempts you get depends on the mode you selected.
-4. If you guess incorrectly, the game will tell you whether the correct number is higher or lower than your guess.
-5. You can also ask for hints by typing 'hint'. The number of hints you get depends on the mode you selected.
+## Difficulty Levels
+- Easy: The number to guess is between 1 and 100, you have unlimited attempts and no hints.
+- Medium: The number to guess is between 1 and 200, you have 10 attempts and 2 hints.
+- Hard: The number to guess is between 1 and 500, you have 9 attempts and 3 hints.
+- Extreme: The number to guess is between 1 and 100, you have 8 attempts and 5 hints.
 
-## Game Modes
-
-- **Easy Mode**: Guess a number between 1 and 100. You have unlimited attempts and no hints.
-- **Medium Mode**: Guess a number between 1 and 200. You have 10 attempts and 2 hints.
-- **Hard Mode**: Guess a number between 1 and 500. You have 9 attempts and 3 hints.
+## Scoring
+The scoring system is based on the number of attempts and the difficulty level. The fewer attempts you make, the higher your score. The score is also adjusted based on the difficulty level, with higher penalty for more difficult levels.
 
 ## Building and Running the Game
+This game is written in C++. To build and run the game, you need a C++ compiler. Here are the basic steps to build and run the game:
 
-This game is a single C++ file that can be compiled and run with any C++ compiler. Here is an example of how to compile and run the game with g++:
+1. Clone the repository: `git clone https://github.com/yourusername/numberguessinggame.git`
+2. Navigate to the project directory: `cd numberguessinggame`
+3. Compile the game: `g++ -o game NumberGuessing.cpp`
+4. Run the game: `./game`
 
-```bash
-g++ NumberGuessing.cpp -o NumberGuessing
-./NumberGuessing
-```
+Enjoy the game!
 
-## Issues
+# Screenshots
 
-No issues found as of now.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request.
-
-## Screenshots
-
-![modeSelector](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/63ddaaf6-8a37-49ab-9c41-50e1ec5ea6fc)
-
-![screenshot](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/d8485de9-cffe-41bb-b0c0-df3780d872a9)
-
-![ifFail](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/a1b4272d-c853-4277-a30c-b9c202858b7a)
+![1](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/2b0ed78f-2d54-4e2d-a4d3-9da2dd502e7f)
+![2](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/23a3134a-2f9a-498c-ac10-4deb8ff4ccd1)
+![3](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/db65308f-ca48-49db-ba22-3fbc88825149)
+![4](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/c1359e6e-bbec-4f8c-90d1-5a2834c428eb)
 
