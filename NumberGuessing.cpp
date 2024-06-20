@@ -357,7 +357,6 @@ void guessing()
     printInstructions();
     selectMode(randomNumber, limit, hint, maxNumber, mode);
     generateHints(hints, randomNumber);
-    cout << randomNumber << endl;
 
     do
     {
