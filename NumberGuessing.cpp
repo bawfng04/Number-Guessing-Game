@@ -3,6 +3,26 @@ using namespace std;
 
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
 
+// define constants for easy mode
+#define easyRandomRange 100
+#define easyAttemptsLimit INT_MAX
+#define easyHint 0
+
+// define constants for medium mode
+#define mediumRandomRange 200
+#define mediumAttemptsLimit 10
+#define mediumHint 2
+
+// define constants for hard mode
+#define hardRandomRange 500
+#define hardAttemptsLimit 9
+#define hardHint 3
+
+// define constatns for extreme mode
+#define extremeRandomRange 1000
+#define extremeAttemptsLimit 8
+#define extremeHint 5
+
 // forward declaration
 void guessing();
 // helper functions
@@ -41,10 +61,16 @@ void printBox(string content)
 
 void printInstructions()
 {
-    string gameModeInstructions = "Please select mode:\n"
-                                  "Type 'easy' for easy mode, guess the number between 1 and 100, unlimited attempts and 0 hint\n"
-                                  "Type 'medium' for medium mode, guess the number between 1 and 200, 10 attempts and 2 hint\n"
-                                  "Type 'hard' for hard mode, guess the number between 1 and 500, 9 attemps and 3 hints";
+    string gameModeInstructions = "Please select mode: \n"
+                                  "Type 'easy' for easy mode, guess the number between 1 and " +
+                                  to_string(easyRandomRange) + ", unlimited attempts and " + to_string(easyHint) + " hint\n"
+                                                                                                                   "Type 'medium' for medium mode, guess the number between 1 and " +
+                                  to_string(mediumRandomRange) + ", " + to_string(mediumAttemptsLimit) + " attempts and " + to_string(mediumHint) + " hint\n"
+                                                                                                                                                    "Type 'hard' for hard mode, guess the number between 1 and " +
+                                  to_string(hardRandomRange) + ", " + to_string(hardAttemptsLimit) + " attemps and " + to_string(hardHint) + " hints \n"
+                                                                                                                                             "Type 'extreme' for extreme mode, guess the number between 1 and " +
+                                  to_string(extremeRandomRange) + ", " + to_string(extremeAttemptsLimit) + " attemps and " + to_string(extremeHint) + " hints \n";
+
     printBox(gameModeInstructions);
     cout << endl
          << endl;
@@ -127,24 +153,31 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
     cin >> mode;
     if (mode == "easy")
     {
-        randomNumber = rand() % 100 + 1;
-        limit = INT_MAX;
-        hint = 0;
-        maxNumber = 100;
+        randomNumber = rand() % easyRandomRange + 1;
+        limit = easyAttemptsLimit;
+        hint = easyHint;
+        maxNumber = easyRandomRange;
     }
     else if (mode == "medium")
     {
-        randomNumber = rand() % 200 + 1;
-        limit = 10;
-        hint = 2;
-        maxNumber = 200;
+        randomNumber = rand() % mediumRandomRange + 1;
+        limit = mediumAttemptsLimit;
+        hint = mediumHint;
+        maxNumber = mediumRandomRange;
     }
     else if (mode == "hard")
     {
-        randomNumber = rand() % 500 + 1;
-        limit = 9;
-        hint = 3;
-        maxNumber = 500;
+        randomNumber = rand() % hardRandomRange + 1;
+        limit = hardAttemptsLimit;
+        hint = hardHint;
+        maxNumber = hardRandomRange;
+    }
+    else if (mode == "extreme")
+    {
+        randomNumber = rand() % extremeRandomRange + 1;
+        limit = extremeAttemptsLimit;
+        hint = extremeHint;
+        maxNumber = extremeRandomRange;
     }
     else
     {
