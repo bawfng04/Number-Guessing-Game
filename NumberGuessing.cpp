@@ -344,7 +344,7 @@ int calculateScore(int usedAttempts, string mode)
     {
         penalty = extremePenalty;
     }
-    return max(0, maxScore - usedAttempts * penalty);
+    return max(0, maxScore - (usedAttempts - 1) * penalty);
 }
 
 // here is where the game starts
@@ -357,6 +357,7 @@ void guessing()
     printInstructions();
     selectMode(randomNumber, limit, hint, maxNumber, mode);
     generateHints(hints, randomNumber);
+    cout << randomNumber << endl;
 
     do
     {
