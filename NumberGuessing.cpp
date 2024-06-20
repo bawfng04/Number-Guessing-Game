@@ -3,6 +3,9 @@ using namespace std;
 
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
 
+// forward declaration
+void guessing();
+int calculateScore(int usedAttempts, string mode);
 // define constants for easy mode
 #define easyRandomRange 100
 #define easyAttemptsLimit INT_MAX
@@ -23,8 +26,22 @@ using namespace std;
 #define extremeAttemptsLimit 8
 #define extremeHint 5
 
-// forward declaration
-void guessing();
+// define constants for score
+#define maxScore 10000
+#define easyPenalty 250
+#define mediumPenalty 500
+#define hardPenalty 750
+#define extremePenalty 1000
+
+// Random number generator
+// 1->range
+int createRandomNumber(int range)
+{
+    std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<int> distribution(1, range);
+    return distribution(generator);
+}
+
 // helper functions
 void printBox(string content)
 {
@@ -118,19 +135,22 @@ void handleSmallerGuess(int remain)
     printBox(messenge);
 }
 
-void handleCorrectGuess(int attempts, int randomNumber)
+void handleCorrectGuess(int attempts, int randomNumber, string mode)
 {
     if (attempts != 1)
-        printBox("Congratulations! You guessed the number with " + to_string(attempts) + " attempts. The correct number was " + to_string(randomNumber));
+        printBox("Congratulations! You guessed the number with " + to_string(attempts) +
+                 " attempts. The correct number was " + to_string(randomNumber) +
+                 "\n Your score is " + to_string(calculateScore(attempts, mode)));
     else
-        printBox("Congratulations! You guessed the number with 1 attempt. The correct number was " + to_string(randomNumber));
+        printBox("Congratulations! You guessed the number with 1 attempt. The correct number was " + to_string(randomNumber) +
+                 "\n Your score is " + to_string(calculateScore(attempts, mode)));
 }
 
 bool outOfLimit(int attempts, int limit, int randomNumber)
 {
     if (attempts == limit)
     {
-        printBox("Failed: You have reached the limit of attempts. The correct number was " + to_string(randomNumber));
+        printBox("Failed: You have reached the limit of attempts. The correct number was " + to_string(randomNumber) + "\n Your score is 0");
         return true;
     }
     return false;
@@ -146,35 +166,34 @@ void startNewLoop(int &attempts, int maxNumber, int hint)
         cout << "Or type 'hint' for a hint" << endl;
 }
 
-void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber)
+void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber, string &mode)
 {
-    string mode;
     cout << "Select mode: ";
     cin >> mode;
     if (mode == "easy")
     {
-        randomNumber = rand() % easyRandomRange + 1;
+        randomNumber = createRandomNumber(easyRandomRange);
         limit = easyAttemptsLimit;
         hint = easyHint;
         maxNumber = easyRandomRange;
     }
     else if (mode == "medium")
     {
-        randomNumber = rand() % mediumRandomRange + 1;
+        randomNumber = createRandomNumber(mediumRandomRange);
         limit = mediumAttemptsLimit;
         hint = mediumHint;
         maxNumber = mediumRandomRange;
     }
     else if (mode == "hard")
     {
-        randomNumber = rand() % hardRandomRange + 1;
+        randomNumber = createRandomNumber(hardRandomRange);
         limit = hardAttemptsLimit;
         hint = hardHint;
         maxNumber = hardRandomRange;
     }
     else if (mode == "extreme")
     {
-        randomNumber = rand() % extremeRandomRange + 1;
+        randomNumber = createRandomNumber(extremeRandomRange);
         limit = extremeAttemptsLimit;
         hint = extremeHint;
         maxNumber = extremeRandomRange;
@@ -254,6 +273,7 @@ bool isAmstrongNumber(int n)
     return sum == n;
 }
 
+// get hints
 void getHints(vector<pair<string, bool>> &v)
 {
     int randomIndex = rand() % v.size();
@@ -304,18 +324,43 @@ void generateHints(vector<pair<string, bool>> &v, int randomNumber)
         v.push_back(make_pair("The number is not an amstrong number", false));
 }
 
+// score
+int calculateScore(int usedAttempts, string mode)
+{
+    int penalty;
+    if (mode == "easy")
+    {
+        penalty = easyPenalty;
+    }
+    else if (mode == "medium")
+    {
+        penalty = mediumPenalty;
+    }
+    else if (mode == "hard")
+    {
+        penalty = hardPenalty;
+    }
+    else if (mode == "extreme")
+    {
+        penalty = extremePenalty;
+    }
+    return max(0, maxScore - usedAttempts * penalty);
+}
+
+// here is where the game starts
 void guessing()
 {
     srand(time(0));
-    int randomNumber, guess, limit, hint, maxNumber, attempts = 0;
+    int randomNumber, guess, limit, hint, maxNumber, attempts = 1;
     vector<pair<string, bool>> hints;
+    string mode;
     printInstructions();
-    selectMode(randomNumber, limit, hint, maxNumber);
+    selectMode(randomNumber, limit, hint, maxNumber, mode);
     generateHints(hints, randomNumber);
 
     do
     {
-        if (outOfLimit(attempts, limit, randomNumber))
+        if (outOfLimit(attempts, limit + 1, randomNumber))
             return;
 
         startNewLoop(attempts, maxNumber, hint);
@@ -362,13 +407,14 @@ void guessing()
             }
         }
         if (guess > randomNumber)
-            handleLargerGuess(limit - attempts);
+            handleLargerGuess(limit - attempts + 1);
         else if (guess < randomNumber)
-            handleSmallerGuess(limit - attempts);
+            handleSmallerGuess(limit - attempts + 1);
         else
-            handleCorrectGuess(attempts, randomNumber);
+            handleCorrectGuess(attempts - 1, randomNumber, mode);
 
     } while (guess != randomNumber);
+
     return;
 }
 
