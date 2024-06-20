@@ -14,7 +14,7 @@ This is a simple number guessing game. The game generates a random number and th
 - Easy: The number to guess is between 1 and 100, you have unlimited attempts and no hints.
 - Medium: The number to guess is between 1 and 200, you have 10 attempts and 2 hints.
 - Hard: The number to guess is between 1 and 500, you have 9 attempts and 3 hints.
-- Extreme: The number to guess is between 1 and 100, you have 8 attempts and 5 hints.
+- Extreme: The number to guess is between 1 and 1000, you have 8 attempts and 5 hints.
 
 ## Scoring
 The scoring system is based on the number of attempts and the difficulty level. The fewer attempts you make, the higher your score. The score is also adjusted based on the difficulty level, with higher penalty for more difficult levels.
