@@ -6,6 +6,7 @@ using namespace std;
 // forward declaration
 void guessing();
 int calculateScore(int usedAttempts, string mode);
+int customPenalty;
 // define constants for easy mode
 #define easyRandomRange 100
 #define easyAttemptsLimit INT_MAX
@@ -86,7 +87,8 @@ void printInstructions()
                                                                                                                                                     "Type 'hard' for hard mode, guess the number between 1 and " +
                                   to_string(hardRandomRange) + ", " + to_string(hardAttemptsLimit) + " attemps and " + to_string(hardHint) + " hints \n"
                                                                                                                                              "Type 'extreme' for extreme mode, guess the number between 1 and " +
-                                  to_string(extremeRandomRange) + ", " + to_string(extremeAttemptsLimit) + " attemps and " + to_string(extremeHint) + " hints \n";
+                                  to_string(extremeRandomRange) + ", " + to_string(extremeAttemptsLimit) + " attemps and " + to_string(extremeHint) + " hints \n"
+                                                                                                                                                      "Type 'custom' for custom mode, you can decide the range of the random number, the attemps and hints you have and the penalty each guess in this mode\n";
 
     printBox(gameModeInstructions);
     cout << endl
@@ -198,6 +200,27 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber, string
         hint = extremeHint;
         maxNumber = extremeRandomRange;
     }
+    else if (mode == "custom")
+    {
+        int range;
+        cout << "Enter the range of the random number: ";
+        cin >> range;
+        randomNumber = createRandomNumber(range);
+        cout << "Enter the limit of attempts: ";
+        cin >> limit;
+        cout << "Enter the number of hints: ";
+        cin >> hint;
+        maxNumber = range;
+        cout << "Enter the penalty for each wrong guess: ";
+        cin >> customPenalty;
+        while (cin.fail() || customPenalty < 0)
+        {
+            cout << "Invalid input. Please enter a positive integer: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin >> customPenalty;
+        }
+    }
     else
     {
         cout << "Invalid mode. Please try again." << endl;
@@ -273,9 +296,48 @@ bool isAmstrongNumber(int n)
     return sum == n;
 }
 
+int maxNumber(int number)
+{
+    int maxNum = 0;
+    while (number > 0)
+    {
+        int lastDigit = number % 10;
+        maxNum = max(maxNum, lastDigit);
+        number /= 10;
+    }
+    return maxNum;
+}
+
+int minNumber(int number)
+{
+    int minNum = INT_MAX;
+    while (number > 0)
+    {
+        int lastDigit = number % 10;
+        minNum = min(minNum, lastDigit);
+        number /= 10;
+    }
+    return minNum;
+}
+
 // get hints
+bool allHintsUsed(const vector<pair<string, bool>> &v)
+{
+    for (auto hint : v)
+    {
+        if (!hint.second)
+            return false;
+    }
+    return true;
+}
+
 void getHints(vector<pair<string, bool>> &v)
 {
+    if (allHintsUsed(v))
+    {
+        printBox("The system has no more hints for you.");
+        return;
+    }
     int randomIndex = rand() % v.size();
     while (v[randomIndex].second)
         randomIndex = rand() % v.size();
@@ -322,6 +384,10 @@ void generateHints(vector<pair<string, bool>> &v, int randomNumber)
         v.push_back(make_pair("The number is an amstrong number", false));
     else
         v.push_back(make_pair("The number is not an amstrong number", false));
+    // maxNumber
+    v.push_back(make_pair("The max digit of the number is " + to_string(maxNumber(randomNumber)), false));
+    // minNumber
+    v.push_back(make_pair("The min digit of the number is " + to_string(minNumber(randomNumber)), false));
 }
 
 // score
@@ -343,6 +409,14 @@ int calculateScore(int usedAttempts, string mode)
     else if (mode == "extreme")
     {
         penalty = extremePenalty;
+    }
+    else if (mode == "custom")
+    {
+        penalty = customPenalty;
+    }
+    else
+    {
+        penalty = 0;
     }
     return max(0, maxScore - (usedAttempts - 1) * penalty);
 }
@@ -414,7 +488,6 @@ void guessing()
             handleCorrectGuess(attempts - 1, randomNumber, mode);
 
     } while (guess != randomNumber);
-
     return;
 }
 
