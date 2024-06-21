@@ -42,7 +42,7 @@ To install the Number Guessing Game, follow these simple steps:
 3. The game will generate a random number within the selected range. Start guessing the number by entering your guesses.
 4. After each guess, the game will tell you if your guess is too high, too low, or correct.
 5. Use the hints provided by the game to adjust your next guess.
-6. The game ends when you guess the correct number. Your score, based on the number of attempts, will be displayed.
+6. The game ends when you guess the correct number or you run out of guesses. Your score, based on the number of attempts, will be displayed.
 
 #Screenshots
 
