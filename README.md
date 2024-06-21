@@ -31,7 +31,7 @@ Enjoy the game!
 
 # Screenshots
 
-![1](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/2b0ed78f-2d54-4e2d-a4d3-9da2dd502e7f)
+![1](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/f791e03a-a5da-459e-8a5c-e1e4a6ee3a5f)
 ![2](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/23a3134a-2f9a-498c-ac10-4deb8ff4ccd1)
 ![3](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/db65308f-ca48-49db-ba22-3fbc88825149)
 ![4](https://github.com/bangwoo4/Number-Guessing-Game/assets/133222169/c1359e6e-bbec-4f8c-90d1-5a2834c428eb)
