@@ -4,35 +4,39 @@ using namespace std;
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
 
 // forward declaration
+int customGuessPenalty, customTimePenalty;
 void guessing();
-int calculateScore(int usedAttempts, string mode);
-int customPenalty;
+int calculateScore(int usedAttempts, int timeTaken, string mode);
 // define constants for easy mode
 #define easyRandomRange 100
 #define easyAttemptsLimit INT_MAX
 #define easyHint 0
+#define easyGuessPenalty 250
+#define easyTimePenalty 0
 
 // define constants for medium mode
 #define mediumRandomRange 200
 #define mediumAttemptsLimit 10
 #define mediumHint 2
+#define mediumGuessPenalty 500
+#define mediumTimePenalty 5
 
 // define constants for hard mode
 #define hardRandomRange 500
 #define hardAttemptsLimit 9
 #define hardHint 3
+#define hardGuessPenalty 750
+#define hardTimePenalty 10
 
 // define constatns for extreme mode
 #define extremeRandomRange 1000
 #define extremeAttemptsLimit 8
 #define extremeHint 5
+#define extremeGuessPenalty 1000
+#define extremeTimePenalty 15
 
 // define constants for score
 #define maxScore 10000
-#define easyPenalty 250
-#define mediumPenalty 500
-#define hardPenalty 750
-#define extremePenalty 1000
 
 // Random number generator
 // 1->range
@@ -81,14 +85,14 @@ void printInstructions()
 {
     string gameModeInstructions = "Please select mode: \n"
                                   "Type 'easy' for easy mode, guess the number between 1 and " +
-                                  to_string(easyRandomRange) + ", unlimited attempts and " + to_string(easyHint) + " hint\n"
-                                                                                                                   "Type 'medium' for medium mode, guess the number between 1 and " +
-                                  to_string(mediumRandomRange) + ", " + to_string(mediumAttemptsLimit) + " attempts and " + to_string(mediumHint) + " hint\n"
-                                                                                                                                                    "Type 'hard' for hard mode, guess the number between 1 and " +
-                                  to_string(hardRandomRange) + ", " + to_string(hardAttemptsLimit) + " attemps and " + to_string(hardHint) + " hints \n"
-                                                                                                                                             "Type 'extreme' for extreme mode, guess the number between 1 and " +
-                                  to_string(extremeRandomRange) + ", " + to_string(extremeAttemptsLimit) + " attemps and " + to_string(extremeHint) + " hints \n"
-                                                                                                                                                      "Type 'custom' for custom mode, you can decide the range of the random number, the attemps and hints you have and the penalty each guess in this mode\n";
+                                  to_string(easyRandomRange) + ", unlimited attempts and " + to_string(easyHint) + " hint, every second you lost " + to_string(easyTimePenalty) + " points\n"
+                                                                                                                                                                                  "Type 'medium' for medium mode, guess the number between 1 and " +
+                                  to_string(mediumRandomRange) + ", " + to_string(mediumAttemptsLimit) + " attempts and " + to_string(mediumHint) + " hint, every second you lost " + to_string(mediumTimePenalty) + " points\n"
+                                                                                                                                                                                                                     "Type 'hard' for hard mode, guess the number between 1 and " +
+                                  to_string(hardRandomRange) + ", " + to_string(hardAttemptsLimit) + " attemps and " + to_string(hardHint) + " hints, every second you lost " + to_string(hardTimePenalty) + " points\n"
+                                                                                                                                                                                                             "Type 'extreme' for extreme mode, guess the number between 1 and " +
+                                  to_string(extremeRandomRange) + ", " + to_string(extremeAttemptsLimit) + " attemps and " + to_string(extremeHint) + " hints, every second you lost " + to_string(extremeTimePenalty) + " points\n"
+                                                                                                                                                                                                                         "Type 'custom' for custom mode, you can decide the range of the random number, the attemps and hints you have and the penalty each guess and each second in this mode\n";
 
     printBox(gameModeInstructions);
     cout << endl
@@ -137,22 +141,22 @@ void handleSmallerGuess(int remain)
     printBox(messenge);
 }
 
-void handleCorrectGuess(int attempts, int randomNumber, string mode)
+void handleCorrectGuess(int attempts, int randomNumber, string mode, int timeTaken)
 {
     if (attempts != 1)
         printBox("Congratulations! You guessed the number with " + to_string(attempts) +
-                 " attempts. The correct number was " + to_string(randomNumber) +
-                 "\n Your score is " + to_string(calculateScore(attempts, mode)));
+                 " attempts and " + to_string(timeTaken) + " second. The correct number was " + to_string(randomNumber) +
+                 "\n Your score is " + to_string(calculateScore(attempts, timeTaken, mode)));
     else
-        printBox("Congratulations! You guessed the number with 1 attempt. The correct number was " + to_string(randomNumber) +
-                 "\n Your score is " + to_string(calculateScore(attempts, mode)));
+        printBox("Congratulations! You guessed the number with 1 attempt and " + to_string(timeTaken) + " second. The correct number was " + to_string(randomNumber) +
+                 "\n Your score is " + to_string(calculateScore(attempts, timeTaken, mode)));
 }
 
-bool outOfLimit(int attempts, int limit, int randomNumber)
+bool outOfLimit(int attempts, int limit, int randomNumber, int timeTaken)
 {
     if (attempts == limit)
     {
-        printBox("Failed: You have reached the limit of attempts. The correct number was " + to_string(randomNumber) + "\n Your score is 0");
+        printBox("Failed: You have reached the limit of attempts in " + to_string(timeTaken) + " second. The correct number was " + to_string(randomNumber) + "\n Your score is 0");
         return true;
     }
     return false;
@@ -212,13 +216,22 @@ void selectMode(int &randomNumber, int &limit, int &hint, int &maxNumber, string
         cin >> hint;
         maxNumber = range;
         cout << "Enter the penalty for each wrong guess: ";
-        cin >> customPenalty;
-        while (cin.fail() || customPenalty < 0)
+        cin >> customGuessPenalty;
+        while (cin.fail() || customGuessPenalty < 0)
         {
             cout << "Invalid input. Please enter a positive integer: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cin >> customPenalty;
+            cin >> customGuessPenalty;
+        }
+        cout << "Enter the penalty for each second: ";
+        cin >> customTimePenalty;
+        while (cin.fail() || customTimePenalty < 0)
+        {
+            cout << "Invalid input. Please enter a positive integer: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin >> customTimePenalty;
         }
     }
     else
@@ -391,50 +404,62 @@ void generateHints(vector<pair<string, bool>> &v, int randomNumber)
 }
 
 // score
-int calculateScore(int usedAttempts, string mode)
+int calculateScore(int usedAttempts, int timeTaken, string mode)
 {
-    int penalty;
+    int guessPenalty, timePenalty;
     if (mode == "easy")
     {
-        penalty = easyPenalty;
+        guessPenalty = easyGuessPenalty;
+        timePenalty = easyTimePenalty;
     }
     else if (mode == "medium")
     {
-        penalty = mediumPenalty;
+        guessPenalty = mediumGuessPenalty;
+        timePenalty = mediumTimePenalty;
     }
     else if (mode == "hard")
     {
-        penalty = hardPenalty;
+        guessPenalty = hardGuessPenalty;
+        timePenalty = hardTimePenalty;
     }
     else if (mode == "extreme")
     {
-        penalty = extremePenalty;
+        guessPenalty = extremeGuessPenalty;
+        timePenalty = extremeTimePenalty;
     }
     else if (mode == "custom")
     {
-        penalty = customPenalty;
+        guessPenalty = customGuessPenalty;
+        timePenalty = customTimePenalty;
     }
     else
     {
-        penalty = 0;
+        guessPenalty = 0;
+        timePenalty = 0;
     }
-    return max(0, maxScore - (usedAttempts - 1) * penalty);
+    return max(0, maxScore - (usedAttempts - 1) * guessPenalty - timePenalty * timeTaken);
 }
 
 // here is where the game starts
 void guessing()
 {
     srand(time(0));
-    int randomNumber, guess, limit, hint, maxNumber, attempts = 1;
+    int randomNumber, guess, limit, hint, maxNumber, attempts = 1, timeTaken = 0;
     vector<pair<string, bool>> hints;
     string mode;
     printInstructions();
     selectMode(randomNumber, limit, hint, maxNumber, mode);
+    // start timer
+    auto start = chrono::high_resolution_clock::now();
     generateHints(hints, randomNumber);
 
     do
     {
-        if (outOfLimit(attempts, limit + 1, randomNumber))
+        // update timer
+        auto current = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed = current - start;
+        timeTaken = static_cast<int>(elapsed.count());
+        if (outOfLimit(attempts, limit + 1, randomNumber, timeTaken))
             return;
 
         startNewLoop(attempts, maxNumber, hint);
@@ -480,13 +505,14 @@ void guessing()
                 attempts++;
             }
         }
+
+        timeTaken = chrono::duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - start).count();
         if (guess > randomNumber)
             handleLargerGuess(limit - attempts + 1);
         else if (guess < randomNumber)
             handleSmallerGuess(limit - attempts + 1);
         else
-            handleCorrectGuess(attempts - 1, randomNumber, mode);
-
+            handleCorrectGuess(attempts - 1, randomNumber, mode, timeTaken);
     } while (guess != randomNumber);
     return;
 }
