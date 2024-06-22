@@ -520,5 +520,6 @@ void guessing()
 int main()
 {
     guessing();
+    system("pause");
     return 0;
 }
