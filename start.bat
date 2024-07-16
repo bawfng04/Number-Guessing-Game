@@ -1,5 +1,10 @@
 @echo off
-cd "d:\Projects\NumberGuessingGame"
-g++ NumberGuessing.cpp -o NumberGuessing
-NumberGuessing.exe
-pause
+cd main
+g++ NumberGuessing.cpp -o ../bin/NumberGuessing
+if %ERRORLEVEL% == 0 (
+    cd ../bin
+    NumberGuessing
+    cd ..
+) else (
+    echo Compilation failed.
+)
