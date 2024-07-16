@@ -1,8 +1,8 @@
-#include "libraries.h"
-#include "constants.h"
-#include "utilities.h"
-#include "hintsSystem.h"
-#include "scoresSystem.h"
+#include "components/libraries.h"
+#include "components/constants.h"
+#include "components/utilities.h"
+#include "components/hintsSystem.h"
+#include "components/scoresSystem.h"
 // cd "d:\Projects\NumberGuessingGame" && g++ NumberGuessing.cpp -o NumberGuessing && ./NumberGuessing
 
 // helper functions
@@ -24,9 +24,9 @@ void checkInvalidInput(int &guess, int &attempts, int maxNumber, int hint)
     }
 }
 
-void handleLargerGuess(int remain)
+void handleLargerGuess(int remain, int guess)
 {
-    string messenge = "Guess a lower number! Try again... \n";
+    string messenge = "Guess a LOWER number than " + to_string(guess) + "! Try again... \n";
     if (remain <= 5 && remain != 1)
     {
         messenge += "You have " + to_string(remain) + " attempts left\n";
@@ -36,9 +36,9 @@ void handleLargerGuess(int remain)
     printBox(messenge);
 }
 
-void handleSmallerGuess(int remain)
+void handleSmallerGuess(int remain, int guess)
 {
-    string messenge = "Guess a higher number! Try again... \n";
+    string messenge = "Guess a HIGHER number than " + to_string(guess) + "! Try again... \n";
     if (remain <= 5 && remain != 1)
     {
         messenge += "You have " + to_string(remain) + " attempts left\n";
@@ -63,7 +63,7 @@ bool outOfLimit(int attempts, int limit, int randomNumber, int timeTaken)
 {
     if (attempts == limit)
     {
-        printBox("Failed: You have reached the limit of attempts in " + to_string(timeTaken) + " seconds. The correct number was " + to_string(randomNumber) + "\n Your score is 0");
+        printBox("Failed: You have reached the limit of attempts in " + to_string(timeTaken) + " seconds. The correct number was " + to_string(randomNumber) + "\nYour score is 0");
         return true;
     }
     return false;
@@ -171,7 +171,7 @@ void guessing()
         chrono::duration<double> elapsed = current - start;
         timeTaken = static_cast<int>(elapsed.count());
         if (outOfLimit(attempts, limit + 1, randomNumber, timeTaken)){
-            scoreStore("scores.txt", 0, mode);
+            combineStore("score/scores.txt", "score/scores.json", 0, mode);
             return;
         }
 
@@ -221,14 +221,14 @@ void guessing()
 
         timeTaken = chrono::duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - start).count();
         if (guess > randomNumber)
-            handleLargerGuess(limit - attempts + 1);
+            handleLargerGuess(limit - attempts + 1, guess);
         else if (guess < randomNumber)
-            handleSmallerGuess(limit - attempts + 1);
+            handleSmallerGuess(limit - attempts + 1, guess);
         else
             handleCorrectGuess(attempts - 1, randomNumber, mode, timeTaken);
     } while (guess != randomNumber);
     //write score to file
-    scoreStore("scores.txt", calculateScore(attempts - 1, timeTaken, mode), mode);
+    combineStore("score/scores.txt", "score/scores.json", calculateScore(attempts - 1, timeTaken, mode), mode);
     return;
 }
 
