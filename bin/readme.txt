@@ -1,0 +1,1 @@
+This is where the .exe file will be compiled and created. You can change the path by editing the start.bat file
